@@ -1,11 +1,12 @@
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask import Flask, session, render_template, request, redirect
 from flask_session import Session
 
-import psycopg2
+import sqlite3
 
 from helpers import login_required, apology
+import db_helpers
 
 app = Flask(__name__)
 # Configure application
@@ -13,14 +14,11 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-#Setups up the database
-conn = psycopg2.connectconn = psycopg2.connect(
-    database="cs50",
-    user='postgres',
-    password='password',
-    host='localhost',
-    port= 'db_port'
-)
+print("Setting up database...")
+db_helpers.create_connection()
+db_helpers.create_user_table_if_not_exists()
+db_helpers.create_event_table_if_not_exists()
+db_helpers.create_event_attendees_table_if_not_exists()
 
 @app.after_request
 def after_request(response):
@@ -38,7 +36,6 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
-
     # Forget any user_id
     session.clear()
 
@@ -46,19 +43,21 @@ def login():
     if request.method == "POST":
 
         # Ensure username was submitted
-        if not request.form.get("username"):
-            return apology("must provide username", 403)
+        if not request.form.get("email"):
+            return apology("must provide email", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
         # Query database for username
-        rows = conn.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+        rows = db_helpers.get_username_and_hash(request.form.get("email"))
+        if rows is None:
+            return apology("invalid email and/or password", 403)
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
+            return apology("invalid email and/or password", 403)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -69,7 +68,49 @@ def login():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
+    
+@app.route("/logout")
+def logout():
+    """Log user out"""
 
+    # Forget any user_id
+    session.clear()
 
+    # Redirect user to login form
+    return redirect("/")
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Register user"""
+    # Forget any user_id
+    session.clear()
 
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        if not request.form.get("username"):
+            return apology("Please provide username.", 403)
+        elif not request.form.get("password"):
+            return apology("Please provide password.", 403)
+        elif not request.form.get("confirmation"):
+            return apology("Please confirm password.", 403)
+
+        # Ensure password and confirmation match
+        elif request.form.get("password") != request.form.get("confirmation"):
+            return apology("Passwords do not match.", 403)
+
+        # Check email is available
+        if db_helpers.check_email_exists(request.form.get("email")):
+            return apology("Email already exists.", 403)
+        
+        # Check username is available
+        if db_helpers.check_username_exists(request.form.get("username")):
+            return apology("Username already exists.", 403)
+
+        # Insert user into database
+        db_helpers.create_user(request.form.get("username"), request.form.get("email"), generate_password_hash(request.form.get("password")))
+        session["user_id"] = db_helpers.get_user_id(request.form.get("email"))
+        return redirect("/")
+
+    else:
+        return render_template("register.html")

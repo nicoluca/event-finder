@@ -1,33 +1,56 @@
+/* Set the background color to a dark gray */
+body {
+    background-color: #222222;
+    color: white;
+}
+
+/* Set the text color for headings to a lighter grey */
+h1, h2, h3, h4, h5, h6 {
+    color: #bbbbbb;
+}
+
+/* Set the background color for table rows to a darker grey */
+tr {
+    background-color: #282828;
+}
+
+/* Set the background color for table cells to a very dark grey */
+td {
+    background-color: #181818;
+}
+
+/* Set the background color for buttons to a dark grey */
+button {
+    background-color: #333333;
+    color: white;
+}
+
+/* Set the background color for links to a lightish blue/grey */
+a {
+    color: #66668b;
+}
+
+/* Set the background color for input fields to a dark grey */
+input {
+    background-color: #333333;
+    color: white;
+}
+
 /* Size for brand */
 nav .navbar-brand
 {
-    font-size: xx-large;
+    font-size: x-large;
 }
 
 /* Colors for brand */
-nav .navbar-brand .blue
+nav .navbar-brand .pink
 {
-    color: #537fbe;
+    color: #ae24aa;
+    text-decoration-line: overline;
 }
-nav .navbar-brand .red
+nav .navbar-brand .grey
 {
-    color: #ea433b;
-}
-nav .navbar-brand .yellow
-{
-    color: #f5b82e;
-}
-nav .navbar-brand .green
-{
-    color: #2e944b;
+    color: #6d6d6d;
+    text-decoration-line: underline;
 }
 
-/* table stuff */
-table {
-    margin: 0 auto;
-    border-collapse: collapse;
-}
-td, th {
-    border: 2px solid #ddd;
-    padding: 8px;
-}

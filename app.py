@@ -6,6 +6,7 @@ from flask_session import Session
 import sqlite3
 
 from helpers import login_required, apology
+import helpers
 import db_helpers
 
 app = Flask(__name__)
@@ -51,16 +52,18 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username
-        rows = db_helpers.get_username_and_hash(request.form.get("email"))
+        rows = db_helpers.get_username_and_hash(str(request.form.get("email")))
+        print(rows)
         if rows is None:
-            return apology("invalid email and/or password", 403)
+            return apology("invalid email", 403)
 
+        print(rows)
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid email and/or password", 403)
+        if not check_password_hash(rows[0][1], request.form.get("password")):
+            return apology("invalid password", 403)
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = db_helpers.get_user_id_from_email(request.form.get("email"))[0]
 
         # Redirect user to home page
         return redirect("/")
@@ -95,6 +98,10 @@ def register():
         elif not request.form.get("confirmation"):
             return apology("Please confirm password.", 403)
 
+        # Check email is valid
+        if not helpers.is_valid_email(request.form.get("email")):
+            return apology("Please provide a valid email.", 403)
+        
         # Ensure password and confirmation match
         elif request.form.get("password") != request.form.get("confirmation"):
             return apology("Passwords do not match.", 403)

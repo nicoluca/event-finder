@@ -14,20 +14,16 @@ def create_connection():
     finally:
         if conn:
             conn.close()
+    print("Connection to SQLite DB successful")
 
 def execute_sql(sql, params=None):
-    try:
-        conn = sqlite3.connect(db_name, check_same_thread=False)
+    with sqlite3.connect(db_name, check_same_thread=False) as conn:
         if params:
-            conn.execute(sql, params)
+            print(params)
+            cursor = conn.execute(sql, params)
         else:
-            conn.execute(sql)
-        conn.commit()
-    except Error as e:
-        print(e)
-    finally:
-        if conn:
-            conn.close()
+            cursor = conn.execute(sql)
+        return cursor.fetchall()
 
 def create_event_table_if_not_exists():
     execute_sql('''CREATE TABLE IF NOT EXISTS events
@@ -40,8 +36,8 @@ def create_event_table_if_not_exists():
              user_id INTEGER NOT NULL,
              FOREIGN KEY (user_id) REFERENCES users(id))''')
     execute_sql('''
-             Create UNIQUE INDEX name ON events (name)''')
-    print("Event table created")
+             Create UNIQUE INDEX IF NOT EXISTS name ON events (name)''')
+    print("Event table created or found")
 
 def create_user_table_if_not_exists():
     execute_sql('''CREATE TABLE IF NOT EXISTS users
@@ -50,8 +46,8 @@ def create_user_table_if_not_exists():
             username TEXT NOT NULL,
             hash TEXT NOT NULL)''')
     execute_sql('''
-             Create UNIQUE INDEX username ON users (username)''')
-    print("User table created")
+             Create UNIQUE INDEX IF NOT EXISTS username ON users (username)''')
+    print("User table created or found")
 
 
 def create_event_attendees_table_if_not_exists():
@@ -61,9 +57,10 @@ def create_event_attendees_table_if_not_exists():
              user_id INTEGER NOT NULL,
              FOREIGN KEY (event_id) REFERENCES events(id),
              FOREIGN KEY (user_id) REFERENCES users(id))''')
+
     execute_sql('''
-             Create UNIQUE INDEX event_id ON event_attendees (event_id)''')
-    print("Event attendees table created")
+             Create UNIQUE INDEX IF NOT EXISTS event_id ON event_attendees (event_id)''')
+    print("Event attendees table created or found")
 
 
 #not yet used
@@ -80,32 +77,36 @@ def update_event(name, description, date, time, location, user_id, id):
              (name, description, date, time, location, user_id, id))
 
 def delete_event(id):
-    execute_sql('''DELETE FROM events WHERE id = ?''', (id))
+    execute_sql('''DELETE FROM events WHERE id = ?''', (id,))
 
 def get_events():
     return execute_sql('''SELECT * FROM events''')
 
-def get_event():
-    return execute_sql('''SELECT * FROM events WHERE id = ?''', (id))
+def get_event(id):
+    return execute_sql('''SELECT * FROM events WHERE id = ?''', (id,))
 
 def get_user_events(user_id):
-    return execute_sql('''SELECT * FROM events WHERE user_id = ?''', (user_id))
+    return execute_sql('''SELECT * FROM events WHERE user_id = ?''', (user_id,))
 
 def get_event_attendees(event_id):
-    return execute_sql('''SELECT * FROM event_attendees WHERE event_id = ?''', (event_id))
+    return execute_sql('''SELECT * FROM event_attendees WHERE event_id = ?''', (event_id,))
 
 def create_user(username, email, hash):
     execute_sql('''INSERT INTO users
              (username, email, hash) VALUES (?, ?, ?)''', (username, email, hash))
 
 def check_email_exists(email):
-    return execute_sql('''SELECT email FROM users WHERE email = ?''', (email))
+    return execute_sql('''SELECT email FROM users WHERE email = ?''', (email,))
 
 def check_username_exists(username):
-    return execute_sql('''SELECT username FROM users WHERE username = ?''', (username))
+    return execute_sql('''SELECT username FROM users WHERE username = ?''', (username,))
 
 def get_username_and_hash(email):
-    return execute_sql('''SELECT username, hash FROM users WHERE email = ?''', (email))
+    print(email)
+    return execute_sql('''SELECT username, hash FROM users WHERE email = ?''', (email,))
+
+def get_user_id_from_email(email):
+    return execute_sql('''SELECT id FROM users WHERE email = ?''', (email,))
 
 def get_user_id(username):
-    return execute_sql('''SELECT id FROM users WHERE username = ?''', (username))
+    return execute_sql('''SELECT id FROM users WHERE username = ?''', (username,))

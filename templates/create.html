@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Create
+{% endblock %}
+
+{% block main %}
+    <form action="/create" method="post">
+        <div>
+            <h2 class="text-center">Create a new event</h2>
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" id="name" name="name" placeholder="Name the event" type="text">
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" id="description" name="description" placeholder="Briefly describe the event" type="text">
+        </div>
+        <div>
+            <label for="datetime">Date and time of event</label>
+            <input id="datetime" name="datetime"  type="datetime-local">
+        </div>
+
+        <script
+            id="search-js"
+            defer
+            src="https://api.mapbox.com/search-js/v1.0.0-beta.14/web.js"
+        >
+        </script>
+        <script>        
+            const script = document.getElementById('search-js');
+                script.onload = function() {
+                    mapboxsearch.autofill({
+                        accessToken: '{{ api_key }}'
+                });
+            };
+        </script>
+        <div>
+        </div>
+        <div></div>
+        <div> 
+            <p>Enter the address of the event</p>
+            <input
+            name="address" placeholder="Address" type="text"
+            autocomplete="address-line1"
+            />
+        </div>
+        <div> 
+            <input
+            name="city" placeholder="City" type="text"
+            autocomplete="address-level2"
+            />
+        </div>
+        <div> 
+            <input
+            name="country" placeholder="Country" type="text"
+            autocomplete="country"
+            />
+        </div>
+        <div> 
+            <input
+            name="postcode" placeholder="Postcode" type="text"
+            autocomplete="postal-code"
+            />
+        </div>
+        <div>
+            <button class="btn btn-primary" type="submit">Post Event</button>
+        </div>
+
+    </form>
+{% endblock %}

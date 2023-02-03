@@ -16,26 +16,24 @@
 
         <link href="/static/styles.css" rel="stylesheet">
 
-        <title>loosely coupled: {% block title %}{% endblock %}</title>
+        <title>event finder: {% block title %}{% endblock %}</title>
 
     </head>
 
     <body>
 
-        <nav class="bg-light border navbar navbar-expand-md navbar-light">
+        <nav class="bg-dark navbar navbar-expand-md navbar-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/"><span class="pink">loosely</span><span class="grey"> coupled</span></a>
+                <a class="navbar-brand" href="/"><span class="pink">event</span><span class="grey"> finder</span></a>
                 <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbar">
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/quote">Browse</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/buy">Create</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/sell">Search</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/cash">Cash</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/browse">Browse</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/create">Create</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/myevents">My Events</a></li>
 
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">
@@ -64,7 +62,7 @@
         </main>
 
         <footer class="mb-5 small text-center text-muted">
-            Data provided by <a href="https://iexcloud.io/">IEX</a>
+            (c) <a href="https://github.com/nicopfau">Nico Pfau</a>
         </footer>
 
     </body>

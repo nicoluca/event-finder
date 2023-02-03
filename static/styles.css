@@ -9,6 +9,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #bbbbbb;
 }
 
+
+table {
+    margin: 0 auto;
+}
+
 /* Set the background color for table rows to a darker grey */
 tr {
     background-color: #282828;
@@ -50,7 +55,45 @@ nav .navbar-brand .pink
 }
 nav .navbar-brand .grey
 {
-    color: #6d6d6d;
+    color: #bbbbbb;
     text-decoration-line: underline;
 }
+
+/* Navbar */
+.bg-dark
+{
+    background-color: #222222 !important;
+}
+
+.nav-link
+{
+    color: #ffffff !important;
+}
+
+/* Buttons */
+
+.btn
+{
+    background-color: #333333;
+    color: white;
+    border: #181818;
+}
+
+.btn:hover
+{
+    background-color: #444444;
+    color: white;
+}
+
+/* input fields */
+.form-control
+{
+    background-color: #d9d9d9;
+    color: rgb(27, 27, 27);
+}
+div + div 
+{
+    margin-top: 10px;
+}
+
 

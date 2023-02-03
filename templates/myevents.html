@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My events
+{% endblock %}
+
+{% block main %}
+<div class="section">
+
+
+
+<h2>Events i'm organising</h2>
+{% if my_events %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Location</th>
+            <th>Datetime</th>
+            <th># attending</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in my_events %}
+        <tr>
+            <td>{{ event.name }}</td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.location }}</td>
+            <td>{{ event.datetime }}</td>
+            <td>{{ event.attending }}</td>
+            <td><button class="btn btn-primary" type="button" 
+                onclick="deleteEvent('{{ event.id }}')">Delete event</button></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No events to display</p>
+{% endif %}
+</div>
+
+
+<script>
+    function deleteEvent(eventId) {
+        console.log("Deleting: " + eventId)
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/myevents/" + eventId, true);
+        xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 204) {
+                    location.reload();
+                }
+            };
+        xhr.send();
+        }   
+    </script>
+
+<h2>
+    Events i'm attending
+</h2>
+{% if attending_events %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Location</th>
+            <th>Datetime</th>
+            <th>Organiser</th>
+            <th>Leave</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in attending_events %}
+        <tr>
+            <td>{{ event.name }}</td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.location }}</td>
+            <td>{{ event.datetime }}</td>
+            <td>{{ event.organiser }}</td>
+            <td><button class="btn btn-primary" type="button" 
+                onclick="leaveEvent('{{ event.id }}')">Leave event</button></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No events to display</p>
+{% endif %}
+
+<script>
+    function leaveEvent(eventId) {
+        console.log("Leaving: " + eventId)
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/myevents/" + eventId, true);
+        xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 204) {
+                    location.reload();
+                }
+            };
+        xhr.send();
+        }   
+    </script>
+
+{% endblock %}
+

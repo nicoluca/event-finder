@@ -19,7 +19,7 @@ Once registered and logged in, users are able to create events (incl name, descr
 - The 'my events' page allows you to view and delete your own events, and view and 'exit' events that you joined.
 - The 'logout' page allows you to logout.
 
-###### Potential future functionalities
+##### Potential future functionalities
 - Add user profiles
 - Add a 'search' functionality
 - Add a comment section for each event

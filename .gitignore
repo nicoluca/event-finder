@@ -4,6 +4,7 @@
 events.db
 .env
 cs50project.code-workspace
+.DS_Store
 tests/__pycache__
 /.pytest_cache
 /flask_session

@@ -1,12 +1,12 @@
 # EventFinder
 
 A social event finder web application, where users can create and join events, and view them on a map.
-Final project for (CS50x's Introduction to Computer Science)[https://cs50.harvard.edu/x/2022/]
+Final project for [CS50x's Introduction to Computer Science](https://cs50.harvard.edu/x/2022/)
 
 <img src="images/event-finder_browse.png" width="500" alt="Browse Events">
 
 #### Video Demo
-https://www.youtube.com/watch?v=uQBHK3bsfG8
+[Youtube](https://www.youtube.com/watch?v=uQBHK3bsfG8)
 ### Description
 ##### General description
 EventSharer allows you to register, login and logout with username, email address, and password (that will be hashed).

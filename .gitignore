@@ -7,4 +7,7 @@ cs50project.code-workspace
 tests/__pycache__
 /.pytest_cache
 /flask_session
+flask_session/*
 /source
+eventsXX.db
+flask_session/15b34df393d0e1bb979c0e5e90a814ad

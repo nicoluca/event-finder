@@ -10,6 +10,7 @@ import helpers
 import db_helpers
 
 import os
+
 def create_app():
     app = Flask(__name__)
     # Configure application
@@ -37,6 +38,12 @@ def create_app():
     @app.route("/")
     @login_required
     def index():
+        if "user_id" not in session:
+            return redirect("/login")
+        if session["user_id"] is None:
+            return redirect("/login")
+        if not db_helpers.get_username(session["user_id"]):
+            return redirect("/login")
         return render_template("index.html", username=db_helpers.get_username(session["user_id"]))
 
     @app.route("/login", methods=["GET", "POST"])
@@ -63,7 +70,11 @@ def create_app():
                 return apology("invalid email", 403)
 
             print(rows)
-            # Ensure username exists and password is correct
+            # Ensure username exists 
+            if len(rows) != 1 or rows[0][0] is None:
+                return apology("invalid email", 403)
+            
+            # password is correct
             if not check_password_hash(rows[0][1], request.form.get("password")):
                 return apology("invalid password", 403)
 
@@ -121,7 +132,7 @@ def create_app():
 
             # Insert user into database
             db_helpers.create_user(request.form.get("username"), request.form.get("email"), generate_password_hash(request.form.get("password")))
-            session["user_id"] = db_helpers.get_user_id(request.form.get("email"))
+            #session["user_id"] = db_helpers.get_user_id(request.form.get("email"))
             return redirect("/")
 
         else:
@@ -189,6 +200,14 @@ def create_app():
         db_helpers.delete_event(event_id)
         print("Event deleted successfully:" + str(event_id))
         return '', 204
+    
+    ### Leave Event ###
+    @app.route("/myevents/<int:event_id>", methods=["POST"])
+    def leave(event_id):
+        print("Leaving event...")
+        db_helpers.leave_event(user_id=session["user_id"], event_id=event_id)
+        print("Event left successfully:" + str(event_id))
+        return '', 204
 
     ### Browse Events ###
     @app.route("/browse/", methods=["GET"])
@@ -204,7 +223,7 @@ def create_app():
                 "datetime": event[3],
                 "location": event[4],
                 "organiser": db_helpers.get_username(event[5]),
-                "attending": db_helpers.check_user_is_attending_event(event[0], session["user_id"]),
+                "attending": db_helpers.check_user_is_attending_event(user_id=session["user_id"], event_id=event[0]),
                 "is_organiser": event[5] == session["user_id"]
             })
         print(formatted_events)
@@ -214,7 +233,7 @@ def create_app():
     @app.route("/browse/<int:event_id>", methods=["POST"])
     def join(event_id):
         print("Joining event:" + str(event_id))
-        if db_helpers.check_user_is_attending_event(event_id, session["user_id"]):
+        if db_helpers.check_user_is_attending_event(user_id=session["user_id"], event_id=event_id):
             return apology("You are already attending this event.", 403)
         db_helpers.join_event(session["user_id"], event_id)
         print("Event joined successfully:" + str(event_id))

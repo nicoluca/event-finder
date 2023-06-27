@@ -93,7 +93,7 @@
     function leaveEvent(eventId) {
         console.log("Leaving: " + eventId)
         var xhr = new XMLHttpRequest();
-        xhr.open("DELETE", "/myevents/" + eventId, true);
+        xhr.open("POST", "/myevents/" + eventId, true);
         xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 204) {
                     location.reload();

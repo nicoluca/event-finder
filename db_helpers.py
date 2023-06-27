@@ -70,27 +70,14 @@ def create_event(name, description, datetime_str, location, user_id):
              VALUES (?, ?, ?, ?, ?)''', 
              (name, description, datetime_obj, location, user_id))
 
-#not yet used
-#def update_event(name, description, date, time, location, user_id, id):
-#    execute_sql('''UPDATE events
-#             SET name = ?, description = ?, date = ?, time = ?, location = ?, user_id = ?
-#             WHERE id = ?''', 
-#             (name, description, datetime, location, user_id, id))
-
 def delete_event(id):
     execute_sql('''DELETE FROM events WHERE id = ?''', (id,))
 
 def get_events():
     return execute_sql('''SELECT * FROM events ORDER BY datetime DESC''')
 
-def get_event(id):
-    return execute_sql('''SELECT * FROM events WHERE id = ?''', (id,))
-
 def get_events_by_organiser(user_id):
     return execute_sql('''SELECT * FROM events WHERE user_id = ?''', (user_id,))
-
-def get_event_attendees(event_id):
-    return execute_sql('''SELECT * FROM event_attendees WHERE event_id = ?''', (event_id,))
 
 def create_user(username, email, hash):
     execute_sql('''INSERT INTO users
@@ -113,10 +100,11 @@ def get_user_id(username):
     return execute_sql('''SELECT id FROM users WHERE username = ?''', (username,))
 
 def get_username(user_id):
+    if not execute_sql('''SELECT username FROM users WHERE id = ?''', (user_id,)):
+        return False
     return execute_sql('''SELECT username FROM users WHERE id = ?''', (user_id,))[0][0]
 
 def join_event(user_id, event_id):
-    print(user_id, event_id)
     execute_sql('''INSERT INTO event_attendees
              (user_id, event_id) VALUES (?, ?)''', (user_id, event_id))
     
